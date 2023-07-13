@@ -100,6 +100,50 @@ window.addEventListener("DOMContentLoaded", function (){
 
             setClock(".timer", deadline);
     //timer logic end
+
+    //modal logic start
+            const modalTrigger =document.querySelectorAll("[data-modal]");
+            const modal = document.querySelector(".modal");
+            const modalCloseBtn = document.querySelector("[data-close]");
+
+            modalTrigger.forEach(btn => btn.addEventListener("click", openModal));
+            modalCloseBtn.addEventListener("click", closeModal);
+
+            modal.addEventListener("click", (e)=>{
+                if(e.target === modal){
+                    closeModal();
+                }
+            });
+            
+            document.addEventListener("keydown",(e)=>{
+                if(e.key === "Escape" &&  modal.matches(".show")){
+                   closeModal();
+                }
+            });
+
+            const modalTimerId = setTimeout(openModal,600000);
+
+            function showModalByScroll(){
+                    if(window.scrollY >= 2000){
+                    openModal();
+                    window.removeEventListener("scroll",showModalByScroll);
+                }
+            };
+            
+            window.addEventListener("scroll",showModalByScroll);
+
+         function openModal(){
+            modal.classList.add("show");
+            modal.classList.remove("hide");
+            document.body.style.overflow = "hidden";
+            clearTimeout(modalTimerId);
+        }
+        function closeModal(){
+            modal.classList.remove("show");
+            modal.classList.add("hide");
+            document.body.removeAttribute("style");
+        }
+
+    //modal logic end
+    
 });
-
-
