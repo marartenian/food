@@ -293,38 +293,37 @@ window.addEventListener("DOMContentLoaded", function (){
                 loader.innerHTML = loading();
                 form.append(loader);
 
-                const request = new XMLHttpRequest();
-                request.open("POST", "server.php")
-
-                // request.setRequestHeader("Content-type", "multipart/form-data");
-                request.setRequestHeader("Content-type", "application/json; charset =utf-8");
-
                 if(!navigator.onLine){
                     messagesModal(failure + ":" + "Please check your interet connection,and try again!");
                     loader.remove();
                     form.reset();
                 }
 
-
                 const formData = new FormData(form);
-
                 const obj = {};
                 formData.forEach((val,key)=>obj[key] = val);
 
-                request.send(JSON.stringify(obj));
 
-                request.addEventListener("load",() => {
-                    if(request.status ===200){
-                        console.log(request.response);
-                        messagesModal(success)
-                        loader.remove();
-                          form.reset();
-                    }else{
-                        messagesModal(failure);
-                        loader.remove();
-                        form.reset();
-                    }
+
+                fetch("server.php", {
+                    method:"POST",
+                    headers: {
+                        "Content-type":"application/json; charset =utf-8"
+                    },
+                    body:JSON.stringify(obj)
                 })
+                .then(res => res.text())
+                .then(res => {
+                    console.log(res);
+                    messagesModal(success);
+                })
+                .catch(err => {
+                     messagesModal(failure + ":" + err);
+                })
+                .finally(()=>{
+                    loader.remove();
+                    form.reset();
+                });
             })   
         }
 
